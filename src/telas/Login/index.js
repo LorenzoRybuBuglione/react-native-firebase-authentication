@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Keyboard, View } from "react-native";
 import { Alerta } from "../../componentes/Alerta";
 import Botao from "../../componentes/Botao";
 import { EntradaTexto } from "../../componentes/EntradaTexto";
+import { auth } from "../../config/firebase";
 import { logar } from "../../servicos/requisicoesFirebase";
 import estilos from "./estilos";
 
@@ -12,6 +13,15 @@ export default function Login({ navigation }) {
 
   const [statusError, setStatusError] = useState("");
   const [mensagemError, setMensagemError] = useState("");
+
+  useEffect(() => {
+    const estadoUsuario = auth.onAuthStateChanged((usuario) => {
+      if (usuario) {
+        navigation.replace("Principal");
+      }
+    });
+    return () => estadoUsuario();
+  }, []);
 
   async function realisarLogin() {
     Keyboard.dismiss();
@@ -27,7 +37,7 @@ export default function Login({ navigation }) {
         setMensagemError("E-mail ou senha inválidos!");
         setStatusError("firebase");
       } else {
-        navigation.navigate("Principal");
+        navigation.replace("Principal");
       }
     }
   }
