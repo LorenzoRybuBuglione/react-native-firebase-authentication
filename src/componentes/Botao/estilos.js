@@ -12,7 +12,7 @@ export default StyleSheet.create({
   },
   textoBotao: {
     fontSize: 15,
-    fontFamily: "Roboto",
+    // fontFamily: "Roboto",
     fontWeight: "700",
     color: "#fff",
   }
