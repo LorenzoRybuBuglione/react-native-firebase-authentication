@@ -18,6 +18,21 @@ export default function Login({ navigation }) {
     senha: "",
   });
 
+  const entradas = [
+    {
+      name: "email",
+      label: "E-mail",
+      messageError: "O e-mail é obrigatório",
+      secureTextEntry: false,
+    },
+    {
+      name: "senha",
+      label: "Senha",
+      messageError: "A senha é obrigatória",
+      secureTextEntry: true,
+    },
+  ];
+
   useEffect(() => {
     const estadoUsuario = auth.onAuthStateChanged((usuario) => {
       if (usuario) {
@@ -57,21 +72,18 @@ export default function Login({ navigation }) {
 
   return (
     <View style={estilos.container}>
-      <EntradaTexto
-        label="E-mail"
-        value={dados.email}
-        onChangeText={(valor) => alteraDados("email", valor, dados, setDados)}
-        error={statusError == "email"}
-        messageError={mensagemError}
-      />
-      <EntradaTexto
-        label="Senha"
-        value={dados.senha}
-        onChangeText={(valor) => alteraDados("senha", valor, dados, setDados)}
-        secureTextEntry
-        error={statusError == "senha"}
-        messageError={mensagemError}
-      />
+      {entradas.map((entrada) => {
+        return (
+          <EntradaTexto
+            key={entrada.name}
+            {...entrada}
+            value={dados[entrada.name]}
+            onChangeText={(valor) =>
+              alteraDados(entrada.name, valor, dados, setDados)
+            }
+          />
+        );
+      })}
 
       <Alerta
         mensagem={mensagemError}
