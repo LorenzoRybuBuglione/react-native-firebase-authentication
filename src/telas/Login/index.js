@@ -7,35 +7,37 @@ import { auth } from "../../config/firebase";
 import { logar } from "../../servicos/requisicoesFirebase";
 import estilos from "./estilos";
 import loading from "../../../assets/loading.gif";
+import { alteraDados } from "../../utils/comum";
 
 export default function Login({ navigation }) {
   const [carregando, setCarregando] = useState(true);
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-
   const [statusError, setStatusError] = useState("");
   const [mensagemError, setMensagemError] = useState("");
+  const [dados, setDados] = useState({
+    email: "",
+    senha: "",
+  });
 
   useEffect(() => {
     const estadoUsuario = auth.onAuthStateChanged((usuario) => {
       if (usuario) {
         navigation.replace("Principal");
       }
-      setCarregando(false); 
+      setCarregando(false);
     });
     return () => estadoUsuario();
   }, []);
 
   async function realisarLogin() {
     Keyboard.dismiss();
-    if (email == "") {
+    if (dados.email == "") {
       setMensagemError("O e-mail é obrigatório");
       setStatusError("email");
-    } else if (senha == "") {
+    } else if (dados.senha == "") {
       setMensagemError("A senha é obrigatória");
       setStatusError("senha");
     } else {
-      const resultado = await logar(email, senha);
+      const resultado = await logar(dados.email, dados.senha);
       if (resultado == "erro") {
         setMensagemError("E-mail ou senha inválidos!");
         setStatusError("firebase");
@@ -48,24 +50,24 @@ export default function Login({ navigation }) {
   if (carregando) {
     return (
       <View style={estilos.containerAnimacao}>
-        <Image source={loading} style={estilos.imagem}/>
+        <Image source={loading} style={estilos.imagem} />
       </View>
-    )
+    );
   }
 
   return (
     <View style={estilos.container}>
       <EntradaTexto
         label="E-mail"
-        value={email}
-        onChangeText={(texto) => setEmail(texto)}
+        value={dados.email}
+        onChangeText={(valor) => alteraDados("email", valor, dados, setDados)}
         error={statusError == "email"}
         messageError={mensagemError}
       />
       <EntradaTexto
         label="Senha"
-        value={senha}
-        onChangeText={(texto) => setSenha(texto)}
+        value={dados.senha}
+        onChangeText={(valor) => alteraDados("senha", valor, dados, setDados)}
         secureTextEntry
         error={statusError == "senha"}
         messageError={mensagemError}
