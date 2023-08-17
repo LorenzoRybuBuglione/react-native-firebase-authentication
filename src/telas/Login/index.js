@@ -43,23 +43,32 @@ export default function Login({ navigation }) {
     return () => estadoUsuario();
   }, []);
 
-  async function realisarLogin() {
-    Keyboard.dismiss();
-    if (dados.email == "") {
-      setMensagemError("O e-mail é obrigatório");
-      setStatusError("email");
-    } else if (dados.senha == "") {
-      setMensagemError("A senha é obrigatória");
-      setStatusError("senha");
-    } else {
-      const resultado = await logar(dados.email, dados.senha);
-      if (resultado == "erro") {
-        setMensagemError("E-mail ou senha inválidos!");
-        setStatusError("firebase");
-      } else {
-        navigation.replace("Principal");
+  function verificaEntradasVazias() {
+    const resposta = false;
+    for (const [variavel, valor] of Object.entries(dados)) {
+      if (valor == "") {
+        setDados({
+          ...dados,
+          [variavel]: null,
+        });
+        resposta = true;
       }
     }
+
+    return resposta;
+  }
+
+  async function realisarLogin() {
+    Keyboard.dismiss();
+    if (verificaEntradasVazias()) return;
+
+    const resultado = await logar(dados.email, dados.senha);
+    if (resultado == "erro") {
+      setStatusError(true);
+      setMensagemError("E-mail ou senha não conferem");
+      return;
+    }
+    navigation.replace("Principal");
   }
 
   if (carregando) {
