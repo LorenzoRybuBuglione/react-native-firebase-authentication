@@ -5,7 +5,7 @@ import { EntradaTexto } from "../../componentes/EntradaTexto";
 import estilos from "./estilos";
 import { cadastrar } from "../../servicos/requisicoesFirebase";
 import { Alerta } from "../../componentes/Alerta";
-import { alteraDados } from "../../utils/comum";
+import { alteraDados, verificaEntradasVazias } from "../../utils/comum";
 
 export default function Cadastro({ navigation }) {
   const [statusError, setStatusError] = useState("");
@@ -16,66 +16,69 @@ export default function Cadastro({ navigation }) {
     confirmaSenha: "",
   });
 
+  const entradas = [
+    {
+      name: "email",
+      label: "E-mail",
+      messageError: "O e-mail é obrigatório",
+      secureTextEntry: false,
+    },
+    {
+      name: "senha",
+      label: "Senha",
+      messageError: "A senha é obrigatória",
+      secureTextEntry: true,
+    },
+    {
+      name: "confirmaSenha",
+      label: "Confirmar Senha",
+      messageError: "As senha não conferem",
+      secureTextEntry: true,
+    },
+  ];
+
+  function verificaIgualdadeDasSenhas() {
+    return dados.senha != dados.confirmaSenha;
+  }
+
   async function realizarCadastro() {
-    if (dados.email == "") {
-      setMensagemError("O e-mail é obrigatório");
-      setStatusError("email");
-    } else if (dados.senha == "") {
-      setMensagemError("A senha é obrigatória");
-      setStatusError("senha");
-    } else if (dados.confirmaSenha != dados.senha) {
-      setMensagemError("As senha não conferem");
-      setStatusError("confirmaSenha");
-    } else {
-      const resultado = await cadastrar(
-        dados.email,
-        dados.senha,
-        dados.confirmaSenha
-      );
-      setStatusError("firebase");
-      if (resultado == "sucesso") {
-        setMensagemError("Usuário cadastrado com sucesso");
-        setEmail("");
-        setSenha("");
-        setConfirmaSenha("");
-      } else {
-        setMensagemError(resultado);
-      }
+    if (verificaEntradasVazias(dados, setDados)) return;
+    if (dados.senha != dados.confirmaSenha) {
+      setStatusError(true);
+      setMensagemError("As senhas não conferem");
+      return;
+    }
+
+    const resultado = await cadastrar(dados.email, dados.senha);
+    if (resultado != "sucesso") {
+      setStatusError(true);
+      setMensagemError(resultado);
     }
   }
 
   return (
     <View style={estilos.container}>
-      <EntradaTexto
-        label="E-mail"
-        value={dados.email}
-        onChangeText={(valor) => alteraDados("email", valor, dados, setDados)}
-        error={statusError === "email"}
-        messageError={mensagemError}
-      />
-      <EntradaTexto
-        label="Senha"
-        value={dados.senha}
-        onChangeText={(valor) => alteraDados("senha", valor, dados, setDados)}
-        secureTextEntry
-        error={statusError === "senha"}
-        messageError={mensagemError}
-      />
-
-      <EntradaTexto
-        label="Confirmar Senha"
-        value={dados.confirmaSenha}
-        onChangeText={(valor) =>
-          alteraDados("confirmaSenha", valor, dados, setDados)
-        }
-        secureTextEntry
-        error={statusError === "confirmaSenha"}
-        messageError={mensagemError}
-      />
+      {entradas.map((entrada) => {
+        return (
+          <EntradaTexto
+            key={entrada.name}
+            {...entrada}
+            value={dados[entrada.name]}
+            onChangeText={(valor) =>
+              alteraDados(entrada.name, valor, dados, setDados)
+            }
+            error={
+              entrada.name != "confirmaSenha"
+                ? false
+                : verificaIgualdadeDasSenhas() && dados.confirmaSenha != ""
+            }
+          />
+        );
+      })}
 
       <Alerta
         mensagem={mensagemError}
-        error={statusError == "firebase"}
+        error={statusError}
         setError={setStatusError}
       />
 

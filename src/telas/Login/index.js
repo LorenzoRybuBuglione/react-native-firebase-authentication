@@ -7,7 +7,7 @@ import { auth } from "../../config/firebase";
 import { logar } from "../../servicos/requisicoesFirebase";
 import estilos from "./estilos";
 import loading from "../../../assets/loading.gif";
-import { alteraDados } from "../../utils/comum";
+import { alteraDados, verificaEntradasVazias } from "../../utils/comum";
 
 export default function Login({ navigation }) {
   const [carregando, setCarregando] = useState(true);
@@ -43,24 +43,9 @@ export default function Login({ navigation }) {
     return () => estadoUsuario();
   }, []);
 
-  function verificaEntradasVazias() {
-    const resposta = false;
-    for (const [variavel, valor] of Object.entries(dados)) {
-      if (valor == "") {
-        setDados({
-          ...dados,
-          [variavel]: null,
-        });
-        resposta = true;
-      }
-    }
-
-    return resposta;
-  }
-
   async function realisarLogin() {
     Keyboard.dismiss();
-    if (verificaEntradasVazias()) return;
+    if (verificaEntradasVazias(dados, setDados)) return;
 
     const resultado = await logar(dados.email, dados.senha);
     if (resultado == "erro") {
