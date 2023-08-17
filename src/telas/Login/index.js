@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Keyboard, View } from "react-native";
+import { Image, Keyboard, View } from "react-native";
 import { Alerta } from "../../componentes/Alerta";
 import Botao from "../../componentes/Botao";
 import { EntradaTexto } from "../../componentes/EntradaTexto";
 import { auth } from "../../config/firebase";
 import { logar } from "../../servicos/requisicoesFirebase";
 import estilos from "./estilos";
+import loading from "../../../assets/loading.gif";
 
 export default function Login({ navigation }) {
+  const [carregando, setCarregando] = useState(true);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
@@ -19,6 +21,7 @@ export default function Login({ navigation }) {
       if (usuario) {
         navigation.replace("Principal");
       }
+      setCarregando(false); 
     });
     return () => estadoUsuario();
   }, []);
@@ -40,6 +43,14 @@ export default function Login({ navigation }) {
         navigation.replace("Principal");
       }
     }
+  }
+
+  if (carregando) {
+    return (
+      <View style={estilos.containerAnimacao}>
+        <Image source={loading} style={estilos.imagem}/>
+      </View>
+    )
   }
 
   return (
