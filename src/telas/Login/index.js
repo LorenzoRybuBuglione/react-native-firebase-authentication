@@ -96,7 +96,7 @@ export default function Login({ navigation }) {
 
       <Alerta
         mensagem={mensagemError}
-        error={statusError == "firebase"}
+        error={statusError}
         setError={setStatusError}
       />
 
