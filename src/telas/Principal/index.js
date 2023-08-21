@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import Cabecalho from "../../componentes/Cabecalho";
 import Produto from "../../componentes/Produtos";
 import estilos from "./estilos";
-import { auth } from "../../config/firebase";
+import { auth, db } from "../../config/firebase";
+
+import { addDoc, collection } from "firebase/firestore";
 
 export default function Principal({ navigation }) {
   const usuario = auth.currentUser;
@@ -12,6 +14,17 @@ export default function Principal({ navigation }) {
     auth.signOut();
     navigation.replace("Login");
   }
+
+  useEffect(() => {
+    async function criarProduto() {
+      await addDoc(collection(db, "produtos"), {
+        nome: "tenis",
+        preco: 250.9,
+      });
+    }
+
+    criarProduto();
+  }, []);
 
   return (
     <View style={estilos.container}>
