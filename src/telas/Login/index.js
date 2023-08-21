@@ -4,7 +4,7 @@ import { Alerta } from "../../componentes/Alerta";
 import Botao from "../../componentes/Botao";
 import { EntradaTexto } from "../../componentes/EntradaTexto";
 import { auth } from "../../config/firebase";
-import { logar } from "../../servicos/requisicoesFirebase";
+import { logar } from "../../servicos/auth";
 import estilos from "./estilos";
 import loading from "../../../assets/loading.gif";
 import { alteraDados, verificaEntradasVazias } from "../../utils/comum";
