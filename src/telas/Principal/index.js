@@ -12,7 +12,7 @@ import { BotaoProduto } from "../../componentes/BotaoProduto";
 import { auth } from "../../config/firebase";
 
 import estilos from "./estilos";
-import { pegarProdutos } from "../../servicos/firestore";
+import { pegarProdutos, pegarProdutosTempoReal } from "../../servicos/firestore";
 
 export default function Principal({ navigation }) {
   const usuario = auth.currentUser;
@@ -28,6 +28,8 @@ export default function Principal({ navigation }) {
 
   useEffect(() => {
     carregarProdutosDatabase();
+
+    pegarProdutosTempoReal(setProdutos);
   }, []);
 
   function deslogar() {

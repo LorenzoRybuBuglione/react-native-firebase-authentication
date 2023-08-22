@@ -6,6 +6,9 @@ import {
   getDocs,
   updateDoc,
   deleteDoc,
+  query,
+  where,
+  onSnapshot,
 } from "firebase/firestore";
 
 export async function salvarProduto(data) {
@@ -36,6 +39,20 @@ export async function pegarProdutos() {
   }
 }
 
+export async function pegarProdutosTempoReal(setProdutos) {
+  const ref = query(collection(db, "produtos"));
+  onSnapshot(ref, (querySnapshot) => {
+    const produtos = [];
+    querySnapshot.forEach((doc) => {
+      produtos.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+    setProdutos(produtos);
+  });
+}
+
 export async function atualizarProduto(produtoID, data) {
   try {
     const produtoRef = doc(db, "produtos", produtoID);
@@ -48,12 +65,12 @@ export async function atualizarProduto(produtoID, data) {
 }
 
 export async function deletarProduto(produtoID) {
-    try {
-        const produtoRef = doc(db, "produtos", produtoID);
-        await deleteDoc(produtoRef);
-        return "ok";
-      } catch (e) {
-        console.log(e);
-        return "erro";
-      }
+  try {
+    const produtoRef = doc(db, "produtos", produtoID);
+    await deleteDoc(produtoRef);
+    return "ok";
+  } catch (e) {
+    console.log(e);
+    return "erro";
+  }
 }
