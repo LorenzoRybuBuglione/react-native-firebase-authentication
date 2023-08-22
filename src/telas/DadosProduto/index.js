@@ -3,12 +3,12 @@ import { View } from "react-native";
 import { EntradaTexto } from "../../componentes/EntradaTexto";
 import Botao from "../../componentes/Botao";
 import { Alerta } from "../../componentes/Alerta";
-import { salvarProduto } from "../../servicos/firestore";
+import { salvarProduto, atualizarProduto } from "../../servicos/firestore";
 import estilos from "./estilos";
 
-export default function DadosProduto({ navigation }) {
-  const [nome, setNome] = useState("");
-  const [preco, setPreco] = useState("");
+export default function DadosProduto({ navigation, route }) {
+  const [nome, setNome] = useState(route?.params?.nome || "");
+  const [preco, setPreco] = useState(route?.params?.preco || "");
   const [mensagem, setMensagem] = useState("");
   const [mostrarMensagem, setMostrarMensagem] = useState(false);
 
@@ -18,12 +18,18 @@ export default function DadosProduto({ navigation }) {
       setMostrarMensagem(true);
       return;
     }
-    const resultado = await salvarProduto({
-      nome,
-      preco,
-    });
+    let resultado = "";
+
+    if (route?.params) {
+      resultado = await atualizarProduto(route?.params?.id, { nome, preco });
+    } else {
+      resultado = await salvarProduto({
+        nome,
+        preco,
+      });
+    }
     if (resultado == "erro") {
-      setMensagem("Erro ao cadastrar o produto");
+      setMensagem("Erro ao salvar o produto");
       setMostrarMensagem(true);
     } else {
       navigation.goBack();
