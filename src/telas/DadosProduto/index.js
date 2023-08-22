@@ -26,11 +26,16 @@ export default function DadosProduto({ navigation, route }) {
     let resultado = "";
 
     if (route?.params) {
-      resultado = await atualizarProduto(route?.params?.id, { nome, preco });
+      let data = {
+        nome,
+        preco: Number(preco),
+      };
+
+      resultado = await atualizarProduto(route?.params?.id, data);
     } else {
       resultado = await salvarProduto({
         nome,
-        preco,
+        preco: Number(preco),
       });
     }
     if (resultado == "erro") {
@@ -70,11 +75,13 @@ export default function DadosProduto({ navigation, route }) {
         label="Nome do produto"
         value={nome}
         onChangeText={(texto) => setNome(texto)}
+        keyboardType="default"
       />
       <EntradaTexto
         label="Preço do produto"
         value={preco}
         onChangeText={(texto) => setPreco(texto)}
+        keyboardType="numeric"
       />
       <Botao onPress={() => salvar()}>Salvar</Botao>
       <Alerta

@@ -24,12 +24,14 @@ export default function Login({ navigation }) {
       label: "E-mail",
       messageError: "O e-mail é obrigatório",
       secureTextEntry: false,
+      keyboardType: "email"
     },
     {
       name: "senha",
       label: "Senha",
       messageError: "A senha é obrigatória",
       secureTextEntry: true,
+      keyboardType: "password"
     },
   ];
 

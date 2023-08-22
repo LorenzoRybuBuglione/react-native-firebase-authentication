@@ -7,8 +7,8 @@ import {
   updateDoc,
   deleteDoc,
   query,
-  where,
   onSnapshot,
+  orderBy,
 } from "firebase/firestore";
 
 export async function salvarProduto(data) {
@@ -39,8 +39,8 @@ export async function pegarProdutos() {
   }
 }
 
-export async function pegarProdutosTempoReal(setProdutos) {
-  const ref = query(collection(db, "produtos"));
+export async function pegarProdutosTempoReal(setProdutos, ordem) {
+  const ref = query(collection(db, "produtos"), orderBy(ordem));
   onSnapshot(ref, (querySnapshot) => {
     const produtos = [];
     querySnapshot.forEach((doc) => {
@@ -74,3 +74,7 @@ export async function deletarProduto(produtoID) {
     return "erro";
   }
 }
+
+// export async function ordenarPor(
+//     const q = query(citiesRef, orderBy("state"), orderBy("population", "desc"));
+// )
